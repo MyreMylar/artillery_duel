@@ -1,21 +1,12 @@
-# -----------------------------------------------
-# PLAYER 1 CONTROLS
-# ------------------
-#
-# LEFT SHIFT = Hold down to launch shell
-# LEFT CTRL = Detonate shell (for air-burst or clusters)
-# A = Rotate artillery barrel left
-# D = Rotate artillery barrel right
-# ------------------------------------------------
 import os
 import pygame
 from pygame.locals import *
 
-from player import Player, PlayerLives, Scheme, StartLocation, RespawnPlayer, PowerUps
+from game.player import Player, PlayerLives, Scheme, StartLocation, RespawnPlayer, PowerUps
 from game.wall import Wall
 from game.fire_power_gauge import PowerGauge
 from game.explosion import Explosion
-from wind import Wind
+from game.wind import Wind
 from game.wind_gauge import WindGauge
 
 
@@ -98,17 +89,8 @@ def main():
     players.append(Player(player_1_id, start_location1, player_control_scheme_1,
                           power_gauge_1, player_lives, PowerUps()))
 
-    # --------------------------------------------------------------
-    # CHALLENGE 1
-    # --------------
-    #
-    # Add a second player to the game (GUIDELINE 6 LINES OF CODE)
-    #
-    # Hints:
-    #
-    # - All of the variables you need to pass in are defined above
-    #   already
-    # --------------------------------------------------------------
+    players.append(Player(player_2_id, start_location2, player_control_scheme_2,
+                          power_gauge_2, player_lives, PowerUps()))
 
     clock = pygame.time.Clock()
     running = True

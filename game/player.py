@@ -5,9 +5,6 @@ from pygame.locals import *
 from game.bullet import Bullet
 
 
-# -------------------------------------------
-# We use this PowerUps class in challenge 3
-# -------------------------------------------
 class PowerUps:
     def __init__(self):
         self.explosion_size = 12
@@ -59,9 +56,6 @@ class Player:
 
         self.current_lives = current_lives
 
-        # -------------------------------------
-        # We use this variable in challenge 3
-        # -------------------------------------
         self.power_ups = power_ups
 
         self.player_id = idf
@@ -94,34 +88,16 @@ class Player:
        
         self.position = [float(start_location.position[0]), float(start_location.position[1])]
 
-    # -------------------------------------------------------------------------------
-    # CHALLENGE 3
-    # -------------
-    #
-    # Add two randomly picked 'power up' effects to the function below to make things easier
-    # for the player that is currently losing. All the power up variables are contained in the
-    # player's 'self.power_ups' variable. The 'class' that contains these variables
-    # is at the top of this file.
-    #
-    # (GUIDELINE 12 LINES)
-    #
-    # The three available power ups are:
-    #
-    # - increased explosion size (try increasing it by 8)
-    # - Cluster shells that appear when a shot is detonated mid air (try adding one cluster each time)
-    # - More simultaneous shots (again try adding one each time)
-    #
-    # Hint
-    # -----
-    # - You will need to test the random numbers generated below with if statements
-    #   so that you have a shot at getting all 3.
-    # - You could use another helper function here that takes a random number, to
-    #   avoid having to write the same code twice.
-    # -------------------------------------------------------------------------------
     def activate_random_power_up(self):
         # this function is called when the player dies
-        power_up_choice_1 = random.randint(1, 3)
-        power_up_choice_2 = random.randint(1, 3)
+        for _ in range(0, 2):
+            power_up_choice = random.randint(1, 3)
+            if power_up_choice == 1:
+                self.power_ups.max_shots += 1
+            elif power_up_choice == 2:
+                self.power_ups.clusters_per_shell += 1
+            elif power_up_choice == 3:
+                self.power_ups.explosion_size += 8
 
     def create_fired_bullets(self, bullets):
         if self.should_fire_bullet:

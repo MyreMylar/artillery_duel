@@ -20,28 +20,10 @@ class Wind:
 
         # Set the amount of time in seconds until the wind changes
         self.time_until_wind_changes = 5.0
-        
-    # ------------------------------------------------------------------------------------------
-    # CHALLENGE 2
-    # -------------
-    #
-    # Randomise the amount of time in seconds until the wind changes. (GUIDELINE CHANGE 1 LINE)
-    #
-    #
-    # Hints:
-    #
-    # - Use the random.uniform( your_min_value_here, your_max_value_here ) to generate random
-    #   floating point numbers.
-    #
-    #
-    # EXTRA CREDIT:
-    #
-    # - Figure out how to change the *amount* the wind changes by each time too.
-    #   Try making it change direction more dramatically.
-    # ------------------------------------------------------------------------------------------
+
     def change_wind(self):
         # Set the amount of time in seconds until the wind changes
-        self.time_until_wind_changes = 5.0
+        self.time_until_wind_changes = random.uniform(3.0, 8.0)
 
         # Try to simulate the wind changing. Currently it is more likely to continue
         # blowing in the same direction it blew in last time (4 times out of 5).
