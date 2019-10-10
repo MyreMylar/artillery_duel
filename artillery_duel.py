@@ -1,17 +1,25 @@
+# -----------------------------------------------
+# PLAYER 1 CONTROLS
+# ------------------
+#
+# LEFT SHIFT = Hold down to launch shell
+# LEFT CTRL = Detonate shell (for air-burst or clusters)
+# A = Rotate artillery barrel left
+# D = Rotate artillery barrel right
+# ------------------------------------------------
 import os
 import pygame
 from pygame.locals import *
 
-from game.player import Player, PlayerLives, Scheme, StartLocation, RespawnPlayer, PowerUps
+from player import Player, PlayerLives, Scheme, StartLocation, RespawnPlayer, PowerUps
 from game.wall import Wall
 from game.fire_power_gauge import PowerGauge
 from game.explosion import Explosion
-from game.wind import Wind
+from wind import Wind
 from game.wind_gauge import WindGauge
 
 
 def main():
-
     pygame.init()
     os.environ['SDL_VIDEO_CENTERED'] = '1'  # center the window in the middle of the screen
     pygame.key.set_repeat()
@@ -31,7 +39,7 @@ def main():
     explosions_sprite_sheet = pygame.image.load("images/explosions.png").convert_alpha()
 
     wind = Wind(-20, 20)
-    wind_gauge = WindGauge([x_screen_size/2,
+    wind_gauge = WindGauge([x_screen_size / 2,
                             y_screen_size - y_screen_size * 0.10], wind.min, wind.max)
 
     bullets = []
@@ -42,7 +50,7 @@ def main():
     ground_rect = pygame.Rect(-2000, (y_screen_size - (y_screen_size * 0.20) + 10), 3024, (y_screen_size * 0.20) + 10)
 
     # move up by floor height and half wall height
-    walls.append(Wall([x_screen_size/2, y_screen_size - 118 - y_screen_size * 0.20]))
+    walls.append(Wall([x_screen_size / 2, y_screen_size - 118 - y_screen_size * 0.20]))
 
     for wall in walls:
         wall_sprites.add(wall)
@@ -58,13 +66,13 @@ def main():
     start_location2 = StartLocation(int(x_screen_size - x_screen_size * 0.40),
                                     int(x_screen_size - x_screen_size * 0.05),
                                     (y_screen_size - y_screen_size * 0.20))
-    
+
     player_1_id = "Player 1"
     player_1_lives = PlayerLives(player_1_id, player_lives,
                                  (int(x_screen_size / 2) - 100,
                                   (y_screen_size - y_screen_size * 0.13)))
     lives_board.append(player_1_lives)
-    
+
     player_2_id = "Player 2"
     player_2_lives = PlayerLives(player_2_id, player_lives,
                                  (int(x_screen_size / 2) + 100,
@@ -85,12 +93,21 @@ def main():
     player_control_scheme_1.right = K_d
 
     player_control_scheme_2 = Scheme()
-    
+
     players.append(Player(player_1_id, start_location1, player_control_scheme_1,
                           power_gauge_1, player_lives, PowerUps()))
 
-    players.append(Player(player_2_id, start_location2, player_control_scheme_2,
-                          power_gauge_2, player_lives, PowerUps()))
+    # --------------------------------------------------------------
+    # CHALLENGE 1
+    # --------------
+    #
+    # Add a second player to the game (GUIDELINE 6 LINES OF CODE)
+    #
+    # Hints:
+    #
+    # - All of the variables you need to pass in are defined above
+    #   already
+    # --------------------------------------------------------------
 
     clock = pygame.time.Clock()
     running = True
@@ -99,12 +116,12 @@ def main():
     win_message = ""
     while running:
         frame_time = clock.tick(60)
-        time_delta = frame_time/1000.0
+        time_delta = frame_time / 1000.0
 
         all_sprites.empty()
         all_bullet_sprites.empty()
         all_explosion_sprites.empty()
-        
+
         # handle UI and inout events
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -112,7 +129,7 @@ def main():
             for player in players:
                 player.process_event(event)
             if is_game_over:
-                if event.type == KEYDOWN:     
+                if event.type == KEYDOWN:
                     if event.key == K_y:
                         restart_game = True
 
@@ -144,7 +161,7 @@ def main():
             # update wind
             wind.update(time_delta)
             wind_gauge.update_wind_direction_and_strength(wind.current_value)
-             
+
             # update players and bullets
             for player in players:
                 bullets = player.create_fired_bullets(bullets)
@@ -179,7 +196,7 @@ def main():
             all_sprites.update()
             all_bullet_sprites.update()
             all_explosion_sprites.update()
-        
+
         screen.blit(background, (0, 0))  # draw the background
 
         wall_sprites.draw(screen)
@@ -194,41 +211,41 @@ def main():
         if is_game_over:
             win_message_text_render = large_font.render(win_message,
                                                         True, pygame.Color("#FFFFFF"))
-            win_message_text_render_rect = win_message_text_render.get_rect(centerx=x_screen_size/2,
-                                                                            centery=(y_screen_size/2)-128)
+            win_message_text_render_rect = win_message_text_render.get_rect(centerx=x_screen_size / 2,
+                                                                            centery=(y_screen_size / 2) - 128)
             play_again_text_render = font.render("Play Again? Press 'Y' to restart",
                                                  True, pygame.Color("#FFFFFF"))
-            play_again_text_render_rect = play_again_text_render.get_rect(centerx=x_screen_size/2,
-                                                                          centery=(y_screen_size/2)-90)
+            play_again_text_render_rect = play_again_text_render.get_rect(centerx=x_screen_size / 2,
+                                                                          centery=(y_screen_size / 2) - 90)
             screen.blit(win_message_text_render, win_message_text_render_rect)
             screen.blit(play_again_text_render, play_again_text_render_rect)
 
         for lives in lives_board:
-            screen.blit(stats_base_image, [lives.screen_position[0]-50, lives.screen_position[1]-18])
+            screen.blit(stats_base_image, [lives.screen_position[0] - 50, lives.screen_position[1] - 18])
             score_string = "Lives: " + "{:,}".format(lives.lives)
             score_text_render = font.render(score_string, True, pygame.Color("#FFFFFF"))
             score_text_render_rect = score_text_render.get_rect(centerx=lives.screen_position[0],
                                                                 centery=lives.screen_position[1])
             screen.blit(score_text_render, score_text_render_rect)
-            
+
             shots_value_str = "Shots: " + str(lives.shots)
             shots_text_render = font.render(shots_value_str, True, pygame.Color("#FFFFFF"))
             shots_text_render_rect = shots_text_render.get_rect(centerx=lives.screen_position[0],
-                                                                centery=lives.screen_position[1]+18)
+                                                                centery=lives.screen_position[1] + 18)
             screen.blit(shots_text_render, shots_text_render_rect)
 
             clusters_value_str = "Clusters: " + str(lives.clusters)
             clusters_text_render = font.render(clusters_value_str, True, pygame.Color("#FFFFFF"))
             clusters_text_render_rect = clusters_text_render.get_rect(centerx=lives.screen_position[0],
-                                                                      centery=lives.screen_position[1]+36)
+                                                                      centery=lives.screen_position[1] + 36)
             screen.blit(clusters_text_render, clusters_text_render_rect)
 
             clusters_value_str = "Blast size: " + str(lives.explosion_power)
             clusters_text_render = font.render(clusters_value_str, True, pygame.Color("#FFFFFF"))
             clusters_text_render_rect = clusters_text_render.get_rect(centerx=lives.screen_position[0],
-                                                                      centery=lives.screen_position[1]+54)
+                                                                      centery=lives.screen_position[1] + 54)
             screen.blit(clusters_text_render, clusters_text_render_rect)
-            
+
         pygame.display.flip()  # flip all our drawn stuff onto the screen
 
     pygame.quit()  # exited game loop so quit pygame

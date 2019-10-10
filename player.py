@@ -5,6 +5,9 @@ from pygame.locals import *
 from game.bullet import Bullet
 
 
+# -------------------------------------------
+# We use this PowerUps class in challenge 3
+# -------------------------------------------
 class PowerUps:
     def __init__(self):
         self.explosion_size = 12
@@ -56,6 +59,9 @@ class Player:
 
         self.current_lives = current_lives
 
+        # -------------------------------------
+        # We use this variable in challenge 3
+        # -------------------------------------
         self.power_ups = power_ups
 
         self.player_id = idf
@@ -66,13 +72,13 @@ class Player:
         self.turret_barrel = TurretBarrel(start_location)
 
         self.owned_bullets = []
-        
+
         self.power_level = 0.0
         self.power_gauge = power_gauge
 
         self.should_move_left = False
         self.should_move_right = False
-        
+
         self.should_die = False
 
         self.charging_power = False
@@ -85,19 +91,37 @@ class Player:
         self.max_rotate_speed = 300.0
         self.move_left_acceleration = 0.0
         self.move_right_acceleration = 0.0
-       
+
         self.position = [float(start_location.position[0]), float(start_location.position[1])]
 
+    # -------------------------------------------------------------------------------
+    # CHALLENGE 3
+    # -------------
+    #
+    # Add two randomly picked 'power up' effects to the function below to make things easier
+    # for the player that is currently losing. All the power up variables are contained in the
+    # player's 'self.power_ups' variable. The 'class' that contains these variables
+    # is at the top of this file.
+    #
+    # (GUIDELINE 12 LINES)
+    #
+    # The three available power ups are:
+    #
+    # - increased explosion size (try increasing it by 8)
+    # - Cluster shells that appear when a shot is detonated mid air (try adding one cluster each time)
+    # - More simultaneous shots (again try adding one each time)
+    #
+    # Hint
+    # -----
+    # - You will need to test the random numbers generated below with if statements
+    #   so that you have a shot at getting all 3.
+    # - You could use another helper function here that takes a random number, to
+    #   avoid having to write the same code twice.
+    # -------------------------------------------------------------------------------
     def activate_random_power_up(self):
         # this function is called when the player dies
-        for _ in range(0, 2):
-            power_up_choice = random.randint(1, 3)
-            if power_up_choice == 1:
-                self.power_ups.max_shots += 1
-            elif power_up_choice == 2:
-                self.power_ups.clusters_per_shell += 1
-            elif power_up_choice == 3:
-                self.power_ups.explosion_size += 8
+        power_up_choice_1 = random.randint(1, 3)
+        power_up_choice_2 = random.randint(1, 3)
 
     def create_fired_bullets(self, bullets):
         if self.should_fire_bullet:
@@ -117,15 +141,15 @@ class Player:
             bullets.append(bullet)
             self.owned_bullets.append(bullet)
             self.power_level = 0.0
-        return bullets    
-    
+        return bullets
+
     def update_sprite(self, all_sprites):
         all_sprites.add(self.turret_barrel)
         all_sprites.add(self.turret_base)
         return all_sprites
 
     def process_event(self, event):
-        if event.type == KEYDOWN:     
+        if event.type == KEYDOWN:
             if event.key == self.scheme.left:
                 self.should_move_left = True
                 self.should_move_right = False
@@ -158,7 +182,7 @@ class Player:
         for explosion in explosions:
             if self.test_explosion_collision(explosion):
                 self.should_die = True
-                
+
         for bullet in bullets:
             if self.test_bullet_collision(bullet):
                 bullet.should_die = True
@@ -188,7 +212,7 @@ class Player:
                             cluster_direction = 1
 
                 oldest_bullet.should_die = True
-                       
+
         if self.should_move_left or self.should_move_right:
             if self.should_move_right:
                 if self.current_turret_angle < -90.0:
@@ -201,7 +225,7 @@ class Player:
                     self.current_turret_angle -= time_delta * self.lerp(self.min_rotate_speed,
                                                                         self.max_rotate_speed,
                                                                         self.move_right_acceleration)
-               
+
             if self.should_move_left:
                 if self.current_turret_angle > 90.0:
                     self.current_turret_angle = 90.0
@@ -243,17 +267,17 @@ class Player:
         collided = False
         if self.get_hit_box(self.turret_base.rect).colliderect(explosion.rect):
             # test if any of corners of box are inside circle
-            if (self.test_point_in_explosion(self.turret_base.rect.topleft, explosion)) or\
-                    (self.test_point_in_explosion(self.turret_base.rect.topright, explosion)) or\
-                    (self.test_point_in_explosion(self.turret_base.rect.bottomleft, explosion)) or\
+            if (self.test_point_in_explosion(self.turret_base.rect.topleft, explosion)) or \
+                    (self.test_point_in_explosion(self.turret_base.rect.topright, explosion)) or \
+                    (self.test_point_in_explosion(self.turret_base.rect.bottomleft, explosion)) or \
                     (self.test_point_in_explosion(self.turret_base.rect.bottomright, explosion)):
                 collided = True
         return collided
-    
+
     @staticmethod
     def test_point_in_explosion(point, explosion):
-        return (point[0] - explosion.position[0])**2 + (point[1] - explosion.position[1])**2 < explosion.radius**2
-    
+        return (point[0] - explosion.position[0]) ** 2 + (point[1] - explosion.position[1]) ** 2 < explosion.radius ** 2
+
     @staticmethod
     def get_hit_box(rect):
         smaller_rect = rect.copy()
@@ -262,7 +286,7 @@ class Player:
         smaller_rect.height = 28
         smaller_rect.center = original_center
         return smaller_rect
-    
+
     @staticmethod
     def distance_from_line(point, line):
 
@@ -273,10 +297,10 @@ class Player:
         x3 = point[0]
         y3 = point[1]
 
-        px = x2-x1
-        py = y2-y1
+        px = x2 - x1
+        py = y2 - y1
 
-        something = px*px + py*py
+        something = px * px + py * py
 
         u = ((x3 - x1) * px + (y3 - y1) * py) / float(something)
 
@@ -297,7 +321,7 @@ class Player:
         # can just return the squared distance instead
         # (i.e. remove the sqrt) to gain a little performance
 
-        dist = math.sqrt(dx*dx + dy*dy)
+        dist = math.sqrt(dx * dx + dy * dy)
 
         return dist
 
@@ -308,7 +332,7 @@ class Player:
         """
         ang -= 90
         x, y = point[0] - axis[0], point[1] - axis[1]
-        radius = math.sqrt(x*x + y*y)  # get the distance between points
+        radius = math.sqrt(x * x + y * y)  # get the distance between points
 
         r_ang = math.radians(ang)  # convert ang to radians.
 
@@ -319,7 +343,7 @@ class Player:
 
     @staticmethod
     def lerp(a, b, c):
-        return (c * b) + ((1.0-c) * a)
+        return (c * b) + ((1.0 - c) * a)
 
 
 class RespawnPlayer:
